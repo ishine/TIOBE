@@ -1,0 +1,6 @@
+--yes-playlist 
+--ignore-errors 
+--retries 10 
+--hls-prefer-ffmpeg 
+--extract-audio --audio-format wav
+--keep-video 
