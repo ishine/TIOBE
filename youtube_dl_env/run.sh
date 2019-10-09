@@ -6,7 +6,7 @@ if [ $# -ne 2 ]; then
     exit 1;
 fi
 
-youtube_dl=~/work/TIOBE/bin/youtube-dl
+youtube_dl=~/work/TIOBE/youtube_dl_env/bin/youtube-dl
 
 url_list=$1
 dir=$2
