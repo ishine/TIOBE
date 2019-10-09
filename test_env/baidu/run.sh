@@ -1,1 +1,2 @@
-sh test.sh ../../dataset/AISHELL-2/iOS/test >& log && tail -f log
+nohup sh test.sh ../../dataset/AISHELL-2/iOS/test >& log &
+tail -f log

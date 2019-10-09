@@ -160,6 +160,7 @@ if __name__ == '__main__':
 
         url = ASR_URL + "?" + params_query
         req = Request(ASR_URL + "?" + params_query, speech_data, headers)
+        time.sleep(0.5)
         try:
             begin = timer()
             f = urlopen(req)
@@ -178,8 +179,6 @@ if __name__ == '__main__':
         rec_text = result['result'][0].strip()
         trans_file.write(key + '\t' + rec_text + '\n')
         trans_file.flush()
-
-        time.sleep(0.5)
 
     scp_file.close()
     trans_file.close()
