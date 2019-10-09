@@ -4,3 +4,6 @@
 --hls-prefer-ffmpeg 
 --extract-audio --audio-format wav
 --keep-video 
+--verbose
+--restrict-filenames
+--write-info-json
