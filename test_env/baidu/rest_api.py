@@ -171,7 +171,7 @@ if __name__ == '__main__':
                 break
             except:
                 if i != (MAX_RETRY-1):
-                    sleep(0.55)
+                    time.sleep(0.55)
                     continue
                 else:
                     sys.stderr.write('Failed after multiple retries.\n')
