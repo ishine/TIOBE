@@ -121,7 +121,8 @@ if __name__ == '__main__':
 
     SCP = sys.argv[1]    # 只支持 pcm/wav/amr 格式，极速版额外支持m4a 格式
     TRANS = sys.argv[2]  # output result in Kaldi's trans format
-    FORMAT = 'wav';  # 文件后缀只支持 pcm/wav/amr 格式，极速版额外支持m4a 格式
+    FORMAT = 'wav'       # 文件后缀只支持 pcm/wav/amr 格式，极速版额外支持m4a 格式
+    MAX_RETRY = 10
 
     scp_file = codecs.open(SCP, 'r', 'utf8')
     trans_file = codecs.open(TRANS, 'w+', 'utf8')
@@ -160,15 +161,21 @@ if __name__ == '__main__':
 
         url = ASR_URL + "?" + params_query
         req = Request(ASR_URL + "?" + params_query, speech_data, headers)
-        time.sleep(0.5)
-        try:
-            begin = timer()
-            f = urlopen(req)
-            result_str = f.read()
-            sys.stderr.write("Request time cost %f \n" % (timer() - begin))
-        except  URLError as err:
-            sys.stderr.write('asr http response http code : ' + str(err.code) + '\n')
-            result_str = err.read()
+        time.sleep(0.55)  # baidu API calling limitation: 2 qps for free
+        for i in range(MAX_RETRY): # retry
+            try:
+                begin = timer()
+                f = urlopen(req)
+                result_str = f.read()
+                sys.stderr.write("Request time cost %f \n" % (timer() - begin))
+                break
+            except:
+                if i != (MAX_RETRY-1):
+                    sleep(0.55)
+                    continue
+                else:
+                    sys.stderr.write('Failed after multiple retries.\n')
+                    exit(-1)
 
         if (IS_PY3):
             result_str = str(result_str, 'utf-8')
