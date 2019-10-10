@@ -115,7 +115,7 @@ for l in scp_file:
     key = cols[0].strip()
     audio = cols[1].strip()
 
-    sys.stderr.write(str(n) + '\t' + key + '\t')
+    sys.stderr.write(str(n) + '\t' + key + '\n')
     rec_text = ''
     rec_text = process(request, token, audio)
     n += 1
