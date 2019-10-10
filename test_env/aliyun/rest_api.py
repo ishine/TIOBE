@@ -47,14 +47,17 @@ def process(request, token, audioFile) :
             is_success = body['message']
             if status == 20000000 and is_success == 'SUCCESS':
                 result = body['result']
+                conn.close()
                 break;
             else :
                 sys.stderr.write('Failed recognizing, will retry.\n')
                 conn.close()
+                sleep(0.5)
                 continue
         except:
             sys.stderr.write('Exception, will retry.\n')
             conn.close()
+            sleep(0.5)
             continue
 
     return result
