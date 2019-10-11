@@ -13,7 +13,7 @@ from tencentcloud.common.profile.http_profile import HttpProfile
 from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException 
 from tencentcloud.asr.v20190614 import asr_client, models 
 import base64
-import sys, codecs, json
+import sys, codecs, json, time
 
 try: 
     if len(sys.argv) != 3:
@@ -83,6 +83,7 @@ try:
                 rec_text = json.loads(resp.to_json_string())['Result']
                 break
             except:
+                time.sleep(0.5)
                 continue
 
         n += 1
