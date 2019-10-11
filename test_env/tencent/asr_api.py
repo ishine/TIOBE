@@ -4,7 +4,7 @@
 this code is based on official demo at:
     https://cloud.tencent.com/document/product/1093/35734
     一句话识别 python SDK
-    install: pip3 install tencentcloud-sdk-python
+    install SDK: pip install tencentcloud-sdk-python
 '''
 
 from tencentcloud.common import credential
