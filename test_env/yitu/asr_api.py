@@ -86,8 +86,13 @@ if __name__ == '__main__':
                 # 发起请求
                 r = requests.post(ASR_URL, json=body, headers=headers)
                 if r.status_code == 200:
-                    #print('requests rtn:{} text:{}'.format(r.json()['rtn'], r.json()['resultText']))
-                    rec_text = r.json()['resultText']
+                    sys.stderr.write('requests rtn:{} text:{}\n'.format(r.json()['rtn'], r.json()['resultText']))
+                    if r.json()['resultText'] != None:
+                        rec_text = r.json()['resultText']
+                        break
+                    else:
+                        sys.stderr.write('result None, retrying.\n')
+                        continue
                 else:
                     #print('requests fails code:{} details:{}'.format(r.status_code, r.json()))
                     sys.stderr.write('requests fails code:{} details:{}\n'.format(r.status_code, r.json()))
