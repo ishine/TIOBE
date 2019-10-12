@@ -20,7 +20,7 @@ fi
 mkdir -p $dir
 
 echo "-- <preparing wav list with abs paths"
-awk -v d=$dir '{print $1"\t"d"/"$2}' ${testset}/wav.scp | head -n $n > $dir/wav.scp
+awk -v d=$testset '{print $1"\t"d"/"$2}' ${testset}/wav.scp | head -n $n > $dir/wav.scp
 echo "-- done>"
 
 # prepare ref (Text Norm & Tokenization to char)
@@ -32,7 +32,7 @@ echo "-- done>"
 
 # prepare rec (Text Norm & Tokenization to char)
 echo "-- <recognizing"
-python3 asr_api.py $dir/wav.scp $dir/raw_rec.txt >& $dir/asr.log
+./asr_api.py $dir/wav.scp $dir/raw_rec.txt >& $dir/asr.log
 python3 ../utils/cn_tn.py --has_key $dir/raw_rec.txt $dir/tmp.rec_tn.txt
 python3 ../utils/split_to_char.py $dir/tmp.rec_tn.txt $dir/rec.txt
 rm $dir/tmp.*
