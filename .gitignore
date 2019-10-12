@@ -21,3 +21,6 @@ test_env/aliyun/TOKEN_EXPIRE_TIME
 test_env/tencent/SECRET_ID
 test_env/tencent/SECRET_KEY
 
+test_env/yitu/DEV_ID
+test_env/yitu/DEV_KEY
+
