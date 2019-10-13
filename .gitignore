@@ -24,3 +24,7 @@ test_env/tencent/SECRET_KEY
 test_env/yitu/DEV_ID
 test_env/yitu/DEV_KEY
 
+test_env/iflytek/APP_ID
+test_env/iflytek/API_KEY
+test_env/iflytek/API_SECRET
+
