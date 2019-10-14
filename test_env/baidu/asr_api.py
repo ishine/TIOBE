@@ -47,7 +47,10 @@ RATE = 16000;  # 采样率
 
 
 # 普通版
-DEV_PID = 1536;  # 1537 表示识别普通话，使用输入法模型。1536表示识别普通话，使用搜索模型。根据文档填写PID，选择语言及识别模型
+# 1537 表示识别普通话，使用输入法模型。
+# 1536表示识别普通话，使用搜索模型。
+# 根据文档填写PID，选择语言及识别模型
+DEV_PID = 1537;  
 ASR_URL = 'http://vop.baidu.com/server_api'
 SCOPE = 'audio_voice_assistant_get'  # 有此scope表示有asr能力，没有请在网页里勾选，非常旧的应用可能没有
 
@@ -129,26 +132,21 @@ if __name__ == '__main__':
     trans_file = codecs.open(TRANS, 'w+', 'utf8')
 
     n = 0
-
     for l in scp_file:
-        key = ''
-        audio = ''
-        audio = l.strip()
-        if audio == '':
+        l = l.strip()
+        if l == '':
             continue
-        
-        cols = l.split('\t')
-        assert(len(cols) == 2)
-        key = cols[0].strip()
-        audio = cols[1].strip()
-        sys.stderr.write(str(n) + '\t' + key + '\t')
+
+        key, audio = l.split('\t')
+        sys.stderr.write(str(n) + '\tkey:' + key + '\taudio:' + audio + '\n')
+        sys.stderr.flush()
 
         speech_data = []
         with open(audio, 'rb') as speech_file:
             speech_data = speech_file.read()
-        length = len(speech_data)
-        if length == 0:
-            raise DemoError('file %s length read 0 bytes' % audio)
+
+        if len(speech_data) == 0:
+            continue
 
         params = {'cuid': CUID, 'token': token, 'dev_pid': DEV_PID}
         #测试自训练平台需要打开以下信息
@@ -157,7 +155,7 @@ if __name__ == '__main__':
 
         headers = {
             'Content-Type': 'audio/' + FORMAT + '; rate=' + str(RATE),
-            'Content-Length': length
+            'Content-Length': len(speech_data)
         }
 
         url = ASR_URL + "?" + params_query
@@ -165,28 +163,31 @@ if __name__ == '__main__':
         time.sleep(0.55)  # baidu API calling limitation: 2 qps for free
         for i in range(MAX_RETRY): # retry
             try:
-                begin = timer()
+                time1 = timer()
                 f = urlopen(req)
-                result_str = f.read()
-                sys.stderr.write("Request time cost %f \n" % (timer() - begin))
+                resp = f.read()
+                time2 = timer()
+                sys.stderr.write("Request time cost: %f\n" % (time2 - time1))
                 break
             except:
-                if i != (MAX_RETRY-1):
-                    time.sleep(0.55)
-                    continue
-                else:
-                    sys.stderr.write('Failed after multiple retries.\n')
-                    exit(-1)
+                sys.stderr.write('Request failed, will retry.\n')
+                time.sleep(1)
+                continue
 
         if (IS_PY3):
-            result_str = str(result_str, 'utf-8')
+            resp = str(resp, 'utf-8')
+        sys.stderr.write('Response: ' + resp + '\n')
 
-        n+=1
-        sys.stderr.write(result_str + '\n')
-        result = json.loads(result_str)
-        rec_text = result['result'][0].strip()
+        rec_text = ''
+        if resp:
+            try:
+                rec_text = json.loads(resp)['result'][0].strip()
+            except:
+                pass
+
         trans_file.write(key + '\t' + rec_text + '\n')
         trans_file.flush()
+        n+=1
 
     scp_file.close()
     trans_file.close()

@@ -39,24 +39,15 @@ try:
     trans_file = codecs.open(TRANS, 'w+', 'utf8')
     n = 0
     for l in scp_file:
-        if l.strip() == '':
+        l = l.strip()
+        if l == '':
             continue
 
-        key = ''
-        audio = ''
+        key, audio = l.split('\t')
+        sys.stderr.write(str(n) + '\tkey:' + key + '\taudio:' + audio + '\n')
+        sys.stderr.flush()
 
-        cols = l.split('\t')
-        assert(len(cols) == 2)
-        key = cols[0].strip()
-        audio = cols[1].strip()
-
-        sys.stderr.write(str(n) + '\t' + key + '\n')
         rec_text = ''
-
-        #fwave = open('./test.wav', mode='r')
-        #data = str(fwave.read())
-        #dateLen = len(data)
-        #base64Wav = base64.b64encode(data)
 
         #读取文件以及base64
         with open(audio, mode='rb') as f:
@@ -83,12 +74,13 @@ try:
                 rec_text = json.loads(resp.to_json_string())['Result']
                 break
             except:
-                time.sleep(0.5)
+                rec_text = ''
+                time.sleep(1)
                 continue
 
-        n += 1
         trans_file.write(key + '\t' + rec_text + '\n')
         trans_file.flush()
+        n += 1
 
     scp_file.close()
     trans_file.close()

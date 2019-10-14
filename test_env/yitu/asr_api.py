@@ -46,28 +46,21 @@ if __name__ == '__main__':
     scp_file = codecs.open(SCP, 'r', 'utf8')
     trans_file = codecs.open(TRANS, 'w+', 'utf8')
 
-
-
     n = 0
     for l in scp_file:
-        if l.strip() == '':
+        l = l.strip()
+        if l == '':
             continue
-    
-        key = ''
-        audio = ''
-    
-        cols = l.split('\t')
-        assert(len(cols) == 2)
-        key = cols[0].strip()
-        audio = cols[1].strip()
+
+        key, audio = l.split('\t')
+        sys.stderr.write(str(n) + '\tkey:' + key + '\taudio:' + audio + '\n')
+        sys.stderr.flush()
     
         with open(audio, "rb") as audio_file:
             encoded_string = base64.b64encode(audio_file.read())
             basee64_file = encoded_string.decode('utf-8')
 
-        sys.stderr.write(str(n) + '\t' + key + '\n')
         rec_text = ''
-
         for i in range(MAX_RETRY):
             try:
                 # 消息头
@@ -87,27 +80,23 @@ if __name__ == '__main__':
                 r = requests.post(ASR_URL, json=body, headers=headers)
                 if r.status_code == 200:
                     sys.stderr.write('requests rtn:{} text:{}\n'.format(r.json()['rtn'], r.json()['resultText']))
-                    if r.json()['resultText'] != None:
-                        rec_text = r.json()['resultText']
-                        break
-                    else:
-                        sys.stderr.write('result None, retrying.\n')
-                        continue
+                    rec_text = r.json()['resultText']
+                    break
                 else:
-                    #print('requests fails code:{} details:{}'.format(r.status_code, r.json()))
                     sys.stderr.write('requests fails code:{} details:{}\n'.format(r.status_code, r.json()))
-                    sys.stderr.write("request failed, retrying.\n")
-                    time.sleep(0.5)
+                    sys.stderr.write('will retry.\n')
+                    rec_text = ''
+                    time.sleep(1)
                     continue
-
             except:
                 sys.stderr.write("exception, retrying.\n")
-                time.sleep(0.5)
+                rec_text = ''
+                time.sleep(1)
                 continue
 
-        n += 1
         trans_file.write(key + '\t' + rec_text + '\n')
         trans_file.flush()
+        n += 1
 
     scp_file.close()
     trans_file.close()

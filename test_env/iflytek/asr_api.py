@@ -90,7 +90,7 @@ class Ws_Param(object):
 
 
 # 收到websocket消息的处理
-rec_text = None
+rec_text = ''
 def on_message(ws, message):
     global rec_text
     try:
@@ -113,8 +113,6 @@ def on_message(ws, message):
     except Exception as e:
         print("receive msg,but parse exception:", e)
 
-
-
 # 收到websocket错误的处理
 def on_error(ws, error):
     print("### error:", error)
@@ -122,11 +120,12 @@ def on_error(ws, error):
 
 # 收到websocket关闭的处理
 def on_close(ws):
-    print("### closed ###")
+    print(datetime.now(), "### ws closed ###\n")
 
 
 # 收到websocket连接建立的处理
 def on_open(ws):
+    print(datetime.now(), "### ws open ###")
     def run(*args):
         frameSize = 8000  # 每一帧的音频大小
         intervel = 0.04  # 发送音频间隔(单位:s)
@@ -181,9 +180,7 @@ if __name__ == "__main__":
     SCP = sys.argv[1]
     TRANS = sys.argv[2]
 
-    MAX_RETRY = 10
     # 测试时候在此处正确填写相关信息即可运行
-    time1 = datetime.now()
     APP_ID=''
     API_KEY=''
     API_SECRET=''
@@ -199,42 +196,37 @@ if __name__ == "__main__":
 
     scp_file = codecs.open(SCP, 'r', 'utf8')
     trans_file = codecs.open(TRANS, 'w+', 'utf8')
-    n = 0
 
+    MAX_RETRY = 10
+    n = 0
     for l in scp_file:
-        if l.strip() == '':
+        l = l.strip()
+        if l == '':
             continue
 
-        key = ''
-        audio = ''
+        key, audio = l.split('\t')
+        print(str(n) + '\tkey:' + key + '\taudio:' + audio)
+        sys.stdout.flush()
 
-        cols = l.split('\t')
-        assert(len(cols) == 2)
-        key = cols[0].strip()
-        audio = cols[1].strip()
-
-        sys.stderr.write(str(n) + '\t' + key + '\n')
         rec_text = '' # global
-
         for i in range(MAX_RETRY):
             try:
                 wsParam = Ws_Param(APPID=APP_ID, APIKey=API_KEY, APISecret=API_SECRET, AudioFile=audio)
+                wsUrl = wsParam.create_url()
 
                 websocket.enableTrace(False)
-                wsUrl = wsParam.create_url()
                 ws = websocket.WebSocketApp(wsUrl, on_message=on_message, on_error=on_error, on_close=on_close)
                 ws.on_open = on_open
                 ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
-                time2 = datetime.now()
-                print(time2-time1)
                 break
             except:
-                time.sleep(0.5)
+                rec_text = ''
+                time.sleep(1)
                 continue
     
-        n+=1
         trans_file.write(key + '\t' + rec_text + '\n')
         trans_file.flush()
+        n+=1
 
     scp_file.close()
     trans_file.close()

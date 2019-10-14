@@ -23,26 +23,27 @@ echo "-- <preparing wav list with abs paths"
 awk -v d=$testset '{print $1"\t"d"/"$2}' ${testset}/wav.scp | head -n $n > $dir/wav.scp
 echo "-- done>"
 
-# prepare ref (Text Norm & Tokenization to char)
 echo "-- <preparing reference"
 head -n $n ${testset}/trans.txt > $dir/tmp.ref.txt
 python3 ../utils/cn_tn.py --has_key $dir/tmp.ref.txt $dir/tmp.ref_tn.txt  # TN
 python3 ../utils/split_to_char.py $dir/tmp.ref_tn.txt $dir/ref.txt
 echo "-- done>"
 
-# prepare rec (Text Norm & Tokenization to char)
 echo "-- <recognizing"
 ./asr_api.py $dir/wav.scp $dir/raw_rec.txt >& $dir/asr.log
+echo "-- done>"
+
+echo "-- <preparing recognition text"
 python3 ../utils/cn_tn.py --has_key $dir/raw_rec.txt $dir/tmp.rec_tn.txt
 python3 ../utils/split_to_char.py $dir/tmp.rec_tn.txt $dir/rec.txt
 rm $dir/tmp.*
 echo "-- done>"
 
-# get CER and ALIGN
 echo "-- <computing CER and text alignment"
 $COMPUTE_WER --mode=present --text=true ark,t:$dir/ref.txt ark,t:$dir/rec.txt >& $dir/CER
 $ALIGN_TEXT ark,t:$dir/ref.txt ark,t:$dir/rec.txt ark,t:$dir/ALIGN >& $dir/align.log
 echo "-- done>"
+
 echo "============================"
 cat $dir/CER | sed -e "s:\%WER:\%CER:g"
 echo "============================"
