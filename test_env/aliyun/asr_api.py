@@ -91,8 +91,8 @@ if enableInverseTextNormalization :
     request = request + '&enable_inverse_text_normalization=' + 'true'
 if enableVoiceDetection :
     request = request + '&enable_voice_detection=' + 'true'
-
 sys.stderr.write('Request: ' + request + '\n')
+
 
 if len(sys.argv) != 3:
     sys.stderr.write("rest_api.py <in_scp> <out_trans>\n")
@@ -103,26 +103,22 @@ TRANS = sys.argv[2]
 
 scp_file = codecs.open(SCP, 'r', 'utf8')
 trans_file = codecs.open(TRANS, 'w+', 'utf8')
+
 n = 0
 for l in scp_file:
-    if l.strip() == '':
+    l = l.strip()
+    if l == '':
         continue
 
-    key = ''
-    audio = ''
+    key, audio = l.split('\t')
+    sys.stderr.write(str(n) + '\tkey:' + key + '\taudio:' + audio + '\n')
+    sys.stderr.flush()
 
-    cols = l.split('\t')
-    assert(len(cols) == 2)
-    key = cols[0].strip()
-    audio = cols[1].strip()
-
-    sys.stderr.write(str(n) + '\t' + key + '\n')
-    rec_text = ''
     rec_text = process(request, token, audio)
-    n += 1
 
     trans_file.write(key + '\t' + rec_text + '\n')
     trans_file.flush()
+    n += 1
 
 scp_file.close()
 trans_file.close()
