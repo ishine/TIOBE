@@ -40,14 +40,14 @@ from google.cloud.speech_v1 import enums
 import io, sys
 import codecs
 
-def transcribe_file(file_name):
+def transcribe_file(client, file_name):
     """
     Transcribe a short audio file using synchronous speech recognition
     Args:
       local_file_path Path to local audio file, e.g. /path/audio.wav
     """
     # Instantiates a client
-    client = speech_v1.SpeechClient()
+    #client = speech_v1.SpeechClient()
 
     # The language of the supplied audio
     language_code = "zh"
@@ -92,6 +92,8 @@ if __name__ == '__main__':
     SCP = sys.argv[1]
     TRANS = sys.argv[2]
     
+    client = speech_v1.SpeechClient()
+
     scp_file = codecs.open(SCP, 'r', 'utf8')
     trans_file = codecs.open(TRANS, 'w+', 'utf8')
     
@@ -105,7 +107,7 @@ if __name__ == '__main__':
         sys.stderr.write(str(n) + '\tkey:' + key + '\taudio:' + audio + '\n')
         sys.stderr.flush()
 
-        rec_text = transcribe_file(audio)
+        rec_text = transcribe_file(client, audio)
     
         trans_file.write(key + '\t' + rec_text + '\n')
         trans_file.flush()
