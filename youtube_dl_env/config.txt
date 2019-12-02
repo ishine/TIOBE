@@ -1,5 +1,5 @@
 --yes-playlist 
---ignore-errors 
+--ignore-errors --continue --no-overwrites
 --retries 10 
 --hls-prefer-ffmpeg 
 --extract-audio --audio-format wav

@@ -6,12 +6,12 @@ if [ $# -ne 2 ]; then
     exit 1;
 fi
 
-youtube_dl=~/work/TIOBE/youtube_dl_env/bin/youtube-dl
+youtube_dl=~/work/ASR_TIOBE/youtube_dl_env/bin/youtube-dl
 
 url_list=$1
 dir=$2
 
-rm -rf $dir && mkdir -p $dir/{raw,wav}
+#rm -rf $dir && mkdir -p $dir/{raw,wav}
 
 cp $url_list $dir/url.list
 cp config.txt $dir/config.txt
