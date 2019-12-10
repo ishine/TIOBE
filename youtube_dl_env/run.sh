@@ -11,7 +11,7 @@ youtube_dl=~/work/ASR_TIOBE/youtube_dl_env/bin/youtube-dl
 url_list=$1
 dir=$2
 
-#rm -rf $dir && mkdir -p $dir/{raw,wav}
+mkdir -p $dir/{raw,wav}
 
 cp $url_list $dir/url.list
 cp config.txt $dir/config.txt
