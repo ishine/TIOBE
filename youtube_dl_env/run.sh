@@ -1,21 +1,22 @@
 #!/bin/bash
 
 if [ $# -ne 2 ]; then
-    echo "run.sh <url.list> <dir>"
-    echo "  e.g.: run.sh urls.txt test_201909"
+    echo "run.sh <dir>"
+    echo "  e.g.: run.sh test_201909"
+    echo "  pre-defined test_201909/{url.list,config.txt} are required."
     exit 1;
 fi
 
 youtube_dl=~/work/ASR_TIOBE/youtube_dl_env/bin/youtube-dl
 
-url_list=$1
-dir=$2
+dir=$1
+
+if [ ! -f ${dir}/config.txt ] || [ ! -f ${dir}/url.list ]; then
+    echo "Error: require config.txt and url.list in working dir"
+    exit 1;
+fi
 
 mkdir -p $dir/{raw,wav}
-
-cp $url_list $dir/url.list
-cp config.txt $dir/config.txt
-
 
 cd $dir
 $youtube_dl \
