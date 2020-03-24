@@ -127,7 +127,7 @@ def on_close(ws):
 def on_open(ws):
     print(datetime.now(), "### ws open ###")
     def run(*args):
-        frameSize = 8000  # 每一帧的音频大小
+        frameSize = 1280  # 每一帧的音频大小 16k(rate)*2(short)*0.04(40ms) = 1280
         intervel = 0.04  # 发送音频间隔(单位:s)
         status = STATUS_FIRST_FRAME  # 音频的状态信息，标识音频是第一帧，还是中间帧、最后一帧
 
