@@ -49,6 +49,7 @@ class Ws_Param(object):
         self.APIKey = APIKey
         self.APISecret = APISecret
         self.AudioFile = AudioFile
+        self.RecResult = ''
 
         # 公共参数(common)
         self.CommonArgs = {"app_id": self.APPID}
@@ -90,9 +91,7 @@ class Ws_Param(object):
 
 
 # 收到websocket消息的处理
-rec_text = ''
 def on_message(ws, message):
-    global rec_text
     try:
         code = json.loads(message)["code"]
         sid = json.loads(message)["sid"]
@@ -109,7 +108,7 @@ def on_message(ws, message):
                     result += w["w"]
             print("sid:%s call success!,data is:%s" % (sid, json.dumps(data, ensure_ascii=False)))
             print(result)
-            rec_text += result
+            wsParam.RecResult += result
     except Exception as e:
         print("receive msg,but parse exception:", e)
 
@@ -120,12 +119,13 @@ def on_error(ws, error):
 
 # 收到websocket关闭的处理
 def on_close(ws):
-    print(datetime.now(), "### ws closed ###\n")
+    #print(datetime.now(), "### ws closed ###\n")
+    pass
 
 
 # 收到websocket连接建立的处理
 def on_open(ws):
-    print(datetime.now(), "### ws open ###")
+    #print(datetime.now(), "### ws open ###")
     def run(*args):
         frameSize = 1280  # 每一帧的音频大小 16k(rate)*2(short)*0.04(40ms) = 1280
         intervel = 0.04  # 发送音频间隔(单位:s)
@@ -141,7 +141,6 @@ def on_open(ws):
                 # 发送第一帧音频，带business 参数
                 # appid 必须带上，只需第一帧发送
                 if status == STATUS_FIRST_FRAME:
-
                     d = {"common": wsParam.CommonArgs,
                          "business": wsParam.BusinessArgs,
                          "data": {"status": 0, "format": "audio/L16;rate=16000",
@@ -150,24 +149,24 @@ def on_open(ws):
                     d = json.dumps(d)
                     ws.send(d)
                     status = STATUS_CONTINUE_FRAME
+                    time.sleep(intervel) # 模拟音频采样间隔
                 # 中间帧处理
                 elif status == STATUS_CONTINUE_FRAME:
                     d = {"data": {"status": 1, "format": "audio/L16;rate=16000",
                                   "audio": str(base64.b64encode(buf), 'utf-8'),
                                   "encoding": "raw"}}
                     ws.send(json.dumps(d))
+                    time.sleep(intervel) # 模拟音频采样间隔
                 # 最后一帧处理
                 elif status == STATUS_LAST_FRAME:
                     d = {"data": {"status": 2, "format": "audio/L16;rate=16000",
                                   "audio": str(base64.b64encode(buf), 'utf-8'),
                                   "encoding": "raw"}}
                     ws.send(json.dumps(d))
-                    time.sleep(1)
+                    time.sleep(intervel) # 模拟音频采样间隔
                     break
-                # 模拟音频采样间隔
-                time.sleep(intervel)
+        time.sleep(1)
         ws.close()
-
     thread.start_new_thread(run, ())
 
 
@@ -208,7 +207,7 @@ if __name__ == "__main__":
         print(str(n) + '\tkey:' + key + '\taudio:' + audio)
         sys.stdout.flush()
 
-        rec_text = '' # global
+        rec_text = ''
         for i in range(MAX_RETRY):
             try:
                 wsParam = Ws_Param(APPID=APP_ID, APIKey=API_KEY, APISecret=API_SECRET, AudioFile=audio)
@@ -218,11 +217,17 @@ if __name__ == "__main__":
                 ws = websocket.WebSocketApp(wsUrl, on_message=on_message, on_error=on_error, on_close=on_close)
                 ws.on_open = on_open
                 ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
-                break
+                if wsParam.RecResult != '':
+                    rec_text = wsParam.RecResult
+                    break
+                else:
+                    rec_text = ''
+                    time.sleep(1)
+                    print('retrying due to empty result')
             except:
                 rec_text = ''
                 time.sleep(1)
-                continue
+                print('retrying due to exception')
     
         trans_file.write(key + '\t' + rec_text + '\n')
         trans_file.flush()
