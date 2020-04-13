@@ -53,12 +53,12 @@ def process(request, token, audioFile) :
             else :
                 sys.stderr.write('Failed recognizing, will retry.\n')
                 conn.close()
-                sleep(0.5)
+                sleep(1.0)
                 continue
         except:
             sys.stderr.write('Exception, will retry.\n')
             conn.close()
-            sleep(0.5)
+            sleep(1.0)
             continue
 
     return result
