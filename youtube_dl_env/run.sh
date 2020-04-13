@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $# -ne 2 ]; then
+if [ $# -ne 1 ]; then
     echo "run.sh <dir>"
     echo "  e.g.: run.sh test_201909"
     echo "  pre-defined test_201909/{url.list,config.txt} are required."
