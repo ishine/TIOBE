@@ -1,6 +1,6 @@
 APP_ID=`cat APP_ID`
 APP_KEY=`cat APP_KEY`
-EXPIRE=3600s # 20 hrs
+EXPIRE=36000s # 10 hrs
 REQ="{ \"appid\": \"$APP_ID\", \"appkey\": \"$APP_KEY\", \"exp\": \"$EXPIRE\" }"
 
 echo $REQ
