@@ -29,3 +29,7 @@ test_env/iflytek/API_KEY
 test_env/iflytek/API_SECRET
 
 test_env/google/TIOBE.json
+
+test_env/sogou/APP_ID
+test_env/sogou/APP_KEY
+test_env/sogou/TOKEN
