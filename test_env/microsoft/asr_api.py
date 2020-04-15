@@ -39,18 +39,19 @@ def recognize(key, audio):
         audio_data = f.read()
 
     #print(url, headers)
+    rec = ''
     for i in range(MAX_RETRY):
         try:
             r = requests.post(url, data=audio_data, headers=headers)
             sys.stderr.write(r.text + '\n')
             rec = json.loads(r.text)['DisplayText']
             if rec == '':
-                sys.stderr.write("empty rec result, retrying\n")
+                sys.stderr.write(audio + " empty rec result, retrying\n")
                 time.sleep(1.0)
                 continue
             break
         except:
-            sys.stderr.write("exception, retrying\n")
+            sys.stderr.write(audio + " exception, retrying\n")
             time.sleep(1.0)
             continue
     return rec
