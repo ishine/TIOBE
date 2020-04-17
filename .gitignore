@@ -1,5 +1,5 @@
-SDK/*
-dataset/*
+test_env/dataset/*
+test_env/result/*
 youtube_dl_env/bin/*
 *log*
 *.log
@@ -7,32 +7,31 @@ CER
 ALIGN
 *rec.txt
 *ref.txt
-RES_*
 
-test_env/baidu/API_KEY
-test_env/baidu/SECRET_KEY
+test_env/service/baidu/API_KEY
+test_env/service/baidu/SECRET_KEY
 
-test_env/aliyun/APPKEY
-test_env/aliyun/ACCESS_KEY_ID
-test_env/aliyun/ACCESS_KEY_SECRET
-test_env/aliyun/TOKEN
-test_env/aliyun/TOKEN_EXPIRE_TIME
+test_env/service/aliyun/APPKEY
+test_env/service/aliyun/ACCESS_KEY_ID
+test_env/service/aliyun/ACCESS_KEY_SECRET
+test_env/service/aliyun/TOKEN
+test_env/service/aliyun/TOKEN_EXPIRE_TIME
 
-test_env/tencent/SECRET_ID
-test_env/tencent/SECRET_KEY
+test_env/service/tencent/SECRET_ID
+test_env/service/tencent/SECRET_KEY
 
-test_env/yitu/DEV_ID
-test_env/yitu/DEV_KEY
+test_env/service/yitu/DEV_ID
+test_env/service/yitu/DEV_KEY
 
-test_env/iflytek/APP_ID
-test_env/iflytek/API_KEY
-test_env/iflytek/API_SECRET
+test_env/service/iflytek/APP_ID
+test_env/service/iflytek/API_KEY
+test_env/service/iflytek/API_SECRET
 
-test_env/google/TIOBE.json
+test_env/service/google/TIOBE.json
 
-test_env/sogou/APP_ID
-test_env/sogou/APP_KEY
-test_env/sogou/TOKEN
+test_env/service/sogou/APP_ID
+test_env/service/sogou/APP_KEY
+test_env/service/sogou/TOKEN
 
-test_env/microsoft/SUBSCRIPTION_KEY
+test_env/service/microsoft/SUBSCRIPTION_KEY
 
