@@ -21,18 +21,19 @@ fi
 
 mkdir -p $dir
 
-echo "-- <preparing wav list with abs paths & trans"
+echo "-- <subset max_num_utts & preparing wav list with abs paths & trans"
 awk -v d=$testset '{print $1"\t"d"/"$2}' ${testset}/wav.scp | head -n $n > $dir/wav.scp
 head -n $n ${testset}/trans.txt > $dir/trans.txt
 echo "-- done>"
 
 if [ $stage -le 9 ]; then
 echo "-- <recognizing"
-./asr_api.py $dir/wav.scp $dir/raw_rec.txt >& $dir/asr.log
+#./asr_api.py $dir/wav.scp $dir/raw_rec.txt >& $dir/asr.log
+sh recognize.sh $dir/wav.scp $dir >& $dir/log.recognize
 echo "-- done>"
 fi
 
 echo "-- <Getting cer"
-sh ../utils/cer.sh $dir >& $dir/cer.log
+sh ../../utils/compute_cer.sh $dir >& $dir/log.compute_cer
 echo "-- done>"
 
