@@ -12,6 +12,7 @@ import http.client
 import json
 import sys
 import codecs
+import time
 
 def process(request, token, audioFile) :
     MAX_RETRY = 10
@@ -53,12 +54,12 @@ def process(request, token, audioFile) :
             else :
                 sys.stderr.write('Failed recognizing, will retry.\n')
                 conn.close()
-                sleep(1.0)
+                time.sleep(1.0)
                 continue
         except:
             sys.stderr.write('Exception, will retry.\n')
             conn.close()
-            sleep(1.0)
+            time.sleep(1.0)
             continue
 
     return result
