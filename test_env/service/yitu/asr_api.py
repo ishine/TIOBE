@@ -81,7 +81,8 @@ if __name__ == '__main__':
                 if r.status_code == 200:
                     sys.stderr.write('requests rtn:{} text:{}\n'.format(r.json()['rtn'], r.json()['resultText']))
                     rec_text = r.json()['resultText']
-                    break
+                    if (rec_text != None) and (rec_text != ''):
+                        break
                 else:
                     sys.stderr.write('requests fails code:{} details:{}\n'.format(r.status_code, r.json()))
                     sys.stderr.write('will retry.\n')
