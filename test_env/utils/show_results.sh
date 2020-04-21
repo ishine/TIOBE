@@ -1,4 +1,4 @@
-flist=`find . -name "CER"`
+flist=`find . -name "CER_present"`
 
 for f in $flist; do
     echo $f
