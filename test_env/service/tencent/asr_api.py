@@ -72,8 +72,12 @@ try:
                 resp = client.SentenceRecognition(req) 
                 #print(resp.to_json_string())
                 rec_text = json.loads(resp.to_json_string())['Result']
-                break
+                if rec_text != '':
+                    break
+                sys.stderr.write('Empty result, retrying.\n')
+                time.sleep(1)
             except:
+                sys.stderr.write('Exception, retrying.\n')
                 rec_text = ''
                 time.sleep(1)
                 continue
