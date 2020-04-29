@@ -1,5 +1,5 @@
 service_list="aliyun baidu google iflytek sogou tencent yitu microsoft"
-testset_list="AISHELL-2_iOS_test cctv_news"
+testset_list="AISHELL-2_iOS_test cctv_news luyu_yirixing"
 max_num_utts=10000
 
 #----------------------------
