@@ -22,7 +22,7 @@ cd $dir
 $youtube_dl \
     --config-location config.txt \
     --batch-file url.list \
-    --output "raw/%(id)s__%(title)s.%(ext)s" \
+    --output "raw/%(id)s.%(ext)s" \
     --exec 'ffmpeg -i {} -ac 1 -ar 16000 wav/`basename {}`'
 cd -
 
